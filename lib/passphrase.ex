@@ -22,7 +22,8 @@ in an Agent.
   """
   def makephrase(number_words \\ 6) do
     make_seed |> :random.seed    
-    {:ok, _} = load_words
+    {:ok, wordlist} = load_words
+    Agent.start_link(fn -> wordlist end, name: __MODULE__)
 
     get_words(number_words, []) |> Enum.join " "
   end
@@ -64,10 +65,9 @@ in an Agent.
 
   defp get_random, do: :random.uniform
 
-  defp load_words do
+  def load_words do
     {:ok, wordlist_raw} = File.open Application.get_env(:passphrase, :wordlist), [:read]
     wordlist = create_words_list([], wordlist_raw)
-    Agent.start_link(fn -> wordlist end, name: __MODULE__)
     {:ok, wordlist}
   end
 
