@@ -20,18 +20,25 @@ in an Agent.
       "paper sudden seven"
 
   """
-  def makephrase(number_words \\ 6) do
+  def makephrase(number_words \\ 6, minimum_characters \\ 0) do
     make_seed |> :random.seed    
     {:ok, wordlist} = load_words
     Agent.start_link(fn -> wordlist end, name: __MODULE__)
 
-    get_words(number_words, []) |> Enum.join " "
+    get_words(number_words, [], minimum_characters) |> Enum.join " "
   end
 
-  defp get_words(0, words), do: words
-  defp get_words(number_words, words) do
+  defp get_words(0, words, min_chars) do
+    if (words |> Enum.join(" ") |> String.length) < min_chars do
+      get_words(1, words, min_chars)
+    else
+      words
+    end
+  end
+
+  defp get_words(number_words, words, min_chars) do
     number_words = number_words - 1
-    get_words number_words, [get_word|words]
+    get_words number_words, [get_word|words], min_chars
   end
 
 
