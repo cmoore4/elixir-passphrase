@@ -5,10 +5,18 @@ Passphrase is a very simple module that generates secure passphrases to use as p
 
 ## To use
 
-Add Passphrase to your ```mix.exs``` dependencies
+Add Passphrase to your ```mix.exs``` dependencies and applications
 
 ```
-{:passphrase, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
+def application do
+  [applications: [:logger, :passphrase]]
+end
+
+defp deps do
+  [
+   {:passphrase, git: "https://github.com/cmoore4/elixir-passphrase.git", tag: ">= 0.0.1"}
+  ]
+end
 ```
 
 Then you can call Passphrase.makephrase/1 from inside your application to get a string back with the requested number of words.  The default number of words is 6.
