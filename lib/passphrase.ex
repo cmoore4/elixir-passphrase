@@ -44,15 +44,12 @@ in an Agent.
       fn wordlist -> 
         index = wordlist
          |> Enum.count
-         |> mult(random)
+         |> Kernel.*(random)
          |> Float.ceil
          |> trunc #converts float to int
         Enum.fetch!(wordlist,  index) 
       end)
   end
-
-  # REVIEW: How do you multiply in pipe operators?  This is my workaround
-  defp mult(a, b), do: a * b
 
   @doc ~S"""
   Generates 3 random values to be used as seeds to the PRNG.  Uses Erlang's
