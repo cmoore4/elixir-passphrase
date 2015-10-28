@@ -9,15 +9,20 @@ in an Agent.
   The main method for generating a secure random passphrase from your worlist.
   The first paramter is how long the passphrase should be, in words.  Default is 6.
   Reads in a file to a list, stores in an Agent, then requests random words from
-  the Agent's list.  Also initialized the PRNG with a seed.
+  the Agent's list.  Also initialized the PRNG with a seed.  Takes an optional parameter
+  for the minimum character count a phrase must have, which may add words to beyond the 
+  number of words specified until it meets the minimum length.
 
   ## Examples (Will not pass tests, since new phrase is created every run)
 
-      iex> Passphrase.makephrase()
+      iex> Passphrase.makephrase
       "big typewriter fox logan jump quail"
 
-      iex> Passphrase.makephrase(3)
+      iex> Passphrase.makephrase 3
       "paper sudden seven"
+
+      iex> Passphrase.makephrase 3, 20
+      "vessel froze ember sing"
 
   """
   def makephrase(number_words \\ 6, minimum_characters \\ 0) do

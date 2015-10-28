@@ -24,5 +24,15 @@ defmodule PassphraseTest do
   	{:ok, wordlist} = Passphrase.load_words
     assert (wordlist |> Enum.uniq) == wordlist
   end
-  
+
+  test "minimum length overrides minimum words when it has to" do
+  	phrase_length = Passphrase.makephrase(2, 100) |> String.length
+    assert phrase_length >= 100
+  end
+
+  test "minimum length is properly the minimum, and allows phrases to go over" do
+  	phrase_length = Passphrase.makephrase(6, 1) |> String.split |> Enum.count
+  	assert phrase_length > 2
+  end
+
 end

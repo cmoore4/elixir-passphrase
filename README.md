@@ -14,7 +14,7 @@ end
 
 defp deps do
   [
-   {:passphrase, git: "https://github.com/cmoore4/elixir-passphrase.git", tag: "0.0.1"}
+   {:passphrase, git: "https://github.com/cmoore4/elixir-passphrase.git", tag: "0.0.2"}
   ]
 end
 ```
