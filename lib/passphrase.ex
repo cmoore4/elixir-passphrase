@@ -4,7 +4,18 @@ Generates a passphrase from a list of words in a file.  Each word
 should be on a single line. The list generated from the file is stored
 in an Agent.
 """
+  @wordfile "../static/wordlist.txt"
+  @external_resource @wordfile
 
+  # @words @wordfile 
+  #          |> File.stream!
+  #          |> Enum.map(&String.split(&1))
+  #          |> Enum.map(&List.flatten(&1))
+  #          |> Enum.map(&String.strip(&1))
+  #          |> List.flatten
+  #          |> Enum.uniq 
+  #          |> Enum.reverse
+           
   @doc ~S"""
   The main method for generating a secure random passphrase from your worlist.
   The first paramter is how long the passphrase should be, in words.  Default is 6.
@@ -75,9 +86,18 @@ in an Agent.
   defp get_random, do: :random.uniform
 
   def load_words do
-    {:ok, wordlist_raw} = File.open Application.get_env(:passphrase, :wordlist), [:read]
+  	wordlist_raw = get_wordlist_file
     wordlist = create_words_list([], wordlist_raw)
     {:ok, wordlist}
+  end
+
+  def get_wordlist_file do
+  	case Application.get_env(:passphrase, :wordlist) do
+  	  nil -> file = @wordfile
+  	  path -> file = path
+  	end
+  	{:ok, file_handle} = File.open file, [:read]
+  	file_handle
   end
 
   @doc ~S"""
