@@ -1,27 +1,27 @@
 defmodule Passphrase do
-@moduledoc ~S"""
-Generates a passphrase from a list of words in a file.  Each word
-should be on a single line. The list generated from the file is stored
-in an Agent.
-"""
+  @moduledoc ~S"""
+  Generates a passphrase from a list of words in a file.  Each word
+  should be on a single line. The list generated from the file is stored
+  in an Agent.
+  """
   @wordfile "../static/wordlist.txt"
   @external_resource @wordfile
 
-  # @words @wordfile 
+  # @words @wordfile
   #          |> File.stream!
   #          |> Enum.map(&String.split(&1))
   #          |> Enum.map(&List.flatten(&1))
   #          |> Enum.map(&String.strip(&1))
   #          |> List.flatten
-  #          |> Enum.uniq 
+  #          |> Enum.uniq
   #          |> Enum.reverse
-           
+
   @doc ~S"""
   The main method for generating a secure random passphrase from your worlist.
   The first paramter is how long the passphrase should be, in words.  Default is 6.
   Reads in a file to a list, stores in an Agent, then requests random words from
   the Agent's list.  Also initialized the PRNG with a seed.  Takes an optional parameter
-  for the minimum character count a phrase must have, which may add words to beyond the 
+  for the minimum character count a phrase must have, which may add words to beyond the
   number of words specified until it meets the minimum length.
 
   ## Examples (Will not pass tests, since new phrase is created every run)
@@ -37,7 +37,7 @@ in an Agent.
 
   """
   def makephrase(number_words \\ 6, minimum_characters \\ 0) do
-    make_seed |> :random.seed    
+    make_seed |> :random.seed
     {:ok, wordlist} = load_words
     Agent.start_link(fn -> wordlist end, name: __MODULE__)
 
@@ -63,14 +63,14 @@ in an Agent.
   """
   def get_word do
     random = get_random
-    Agent.get(__MODULE__, 
-      fn wordlist -> 
+    Agent.get(__MODULE__,
+      fn wordlist ->
         index = wordlist
          |> Enum.count
          |> Kernel.*(random)
          |> Float.ceil
          |> trunc #converts float to int
-        Enum.fetch!(wordlist,  index) 
+        Enum.fetch!(wordlist,  index)
       end)
   end
 
@@ -86,34 +86,34 @@ in an Agent.
   defp get_random, do: :random.uniform
 
   def load_words do
-  	wordlist_raw = get_wordlist_file
+    wordlist_raw = get_wordlist_file
     wordlist = create_words_list([], wordlist_raw)
     {:ok, wordlist}
   end
 
   def get_wordlist_file do
-  	case Application.get_env(:passphrase, :wordlist) do
-  	  nil -> file = @wordfile
-  	  path -> file = path
-  	end
-  	{:ok, file_handle} = File.open file, [:read]
-  	file_handle
+    case Application.get_env(:passphrase, :wordlist) do
+      nil -> file = @wordfile
+      path -> file = path
+    end
+    {:ok, file_handle} = File.open file, [:read]
+    file_handle
   end
 
   @doc ~S"""
   Recursive function to read in every line from a file, and put that line into a list.
   Returns the list(in original order, which is not necessary, but I like it) when file
-  is EOF. 
+  is EOF.
   """
   def create_words_list(wordlist, wordlist_raw) do
     line = IO.read(wordlist_raw, :line)
     case line do
-      :eof -> wordlist |> Enum.uniq |> Enum.reverse 
-      contents -> 
-        contents 
-        |> String.split 
+      :eof -> wordlist |> Enum.uniq |> Enum.reverse
+      contents ->
+        contents
+        |> String.split
         |> Enum.map(&String.strip(&1))
-        |> Enum.concat(wordlist) 
+        |> Enum.concat(wordlist)
         |> create_words_list(wordlist_raw)
     end
   end
